@@ -1,94 +1,100 @@
-# 📊 CodeStat
+# 🚀 Codestat (Rust CLI Tool)
 
-A simple and powerful Node.js CLI tool to recursively analyze your project folder, count lines of code by file extension, and show code stats including empty lines, totals, and language usage percentages — all with color-coded terminal output.
+Codestat is a blazing fast Rust-based CLI tool to analyze your codebase by scanning directories recursively. It counts code and empty lines, groups by file extension, and displays language usage with colorful output.
 
 ---
 
 ## ✨ Features
 
-- 🔁 Recursively scans all folders and files
-- 🛑 Ignores folders using `.codestatignore` or default list
-- 📦 Reports per-language:
-  - Code lines
+- ⚡ Fast recursive directory traversal using `walkdir`
+- 📂 Ignores folders via `.codestatignore` or default ignore list
+- 🧮 Counts:
+  - Code lines (non-empty)
   - Empty lines
   - Total lines
-  - % share of code lines
-- 🎨 Beautiful, color-coded output
-- 🌍 Usable globally with one `npm link`
+  - Per-file extension statistics
+- 📊 Displays:
+  - Per-language stats
+  - Grand total lines
+  - Code-only lines (excluding empty lines)
+  - Language usage percentages
+- 🎨 Color-coded terminal output using `colored`
 
 ---
 
-## 📦 Installation
+## 🛠 Installation
 
-Clone this repo and install dependencies:
-
-```bash
-git clone https://github.com/your-username/codestat-js.git
-cd codestat-js
-npm install
-```
-
-Link it globally:
+Clone the project and build it:
 
 ```bash
-npm link
+git clone https://github.com/your-username/codestat-rust.git
+cd codestat-rust
+cargo build --release
 ```
 
-Now you can run `codestat` from anywhere.
+To use it globally:
 
----
+```bash
+cargo install --path .
+```
 
-## 🚀 Usage
-
-From any project folder:
+Now you can run the command from any directory containing source code:
 
 ```bash
 codestat
 ```
 
-You'll see output like:
+---
+
+## ⚙️ Usage
+
+```bash
+cd your/project/folder
+codestat
+```
+
+Sample output:
 
 ```
 Code Statistics
-27 files scanned.
+42 files scanned.
 
-js: 800 code lines, 200 empty lines (1000 total) - 55.56%
-ts: 400 code lines, 100 empty lines (500 total) - 27.78%
-json: 240 code lines, 10 empty lines (250 total) - 16.67%
+rs: 1200 code lines, 300 empty lines (1500 total) - 60.00%
+js: 400 code lines, 100 empty lines (500 total) - 20.00%
+html: 300 code lines, 50 empty lines (350 total) - 15.00%
+json: 80 code lines, 10 empty lines (90 total) - 5.00%
 
-Grand Total: 1750 lines
-Code Only: 1440 lines
+Grand Total: 2440 lines
+Code Only: 1980 lines
 ```
 
 ---
 
-## 🧾 .codestatignore
+## 🚫 .codestatignore
 
-You can create a `.codestatignore` file in the root of your project to exclude folders/files from scanning (one per line):
+Place a `.codestatignore` file in the root of your project to skip scanning specific folders:
 
-```txt
+```
 node_modules
-dist
 .git
-coverage
-build
+dist
+target
 ```
 
-If no `.codestatignore` is found, it defaults to ignoring:  
-`node_modules`, `.git`, `dist`, `target`
+If no file is present, defaults are used.
 
 ---
 
 ## 🧠 How It Works
 
-- Uses `fs` and `readline` to read files line-by-line.
-- Recursively scans the directory tree.
-- Groups and totals stats by file extension.
-- Skips over any ignored folder at any depth.
-- Uses `chalk` for clean terminal color output.
+- Uses `walkdir` to walk the directory tree
+- Skips ignored folders (recursively)
+- Uses `BufReader` to read files line-by-line
+- Categorizes lines and extensions
+- Outputs summary and per-language breakdown
 
 ---
 
-## 📄 License
+## 🧾 License
 
 MIT © [Your Name]
