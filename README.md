@@ -97,4 +97,4 @@ If no file is present, defaults are used.
 
 ## 🧾 License
 
-MIT © [Your Name]
+MIT ©
