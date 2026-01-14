@@ -56,12 +56,12 @@ fn main() {
             0.0
         };
         println!(
-            "{}: {} code lines, {} empty lines ({} total) - {:.2}%",
-            ext.green(),
-            code.to_string().yellow(),
-            empty.to_string().blue(),
-            total.to_string().white(),
-            percent.to_string().magenta()
+              "{}: {} code lines, {} empty lines ({} total) - {}%",
+              ext.green(),
+              code.to_string().yellow(),
+              empty.to_string().blue(),
+              total.to_string().white(),
+              format!("{:.1}", percent).magenta()
         );
     }
 
