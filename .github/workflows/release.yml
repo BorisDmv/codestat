@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers when you push a tag like v1.0, v0.1.2, etc.
+
+jobs:
+  release:
+    name: Release - ${{ matrix.target }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-musl # Linux (Static, works everywhere)
+          - target: x86_64-apple-darwin       # macOS (Intel)
+          - target: aarch64-apple-darwin      # macOS (Apple Silicon/M1/M2)
+          - target: x86_64-pc-windows-msvc    # Windows
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Compile and Release
+        uses: rust-build/rust-build.action@v1.4.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          RUSTTARGET: ${{ matrix.target }}
+          ARCHIVE_TYPES: "tar.gz zip"
