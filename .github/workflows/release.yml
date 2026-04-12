@@ -3,29 +3,56 @@ name: Release
 on:
   push:
     tags:
-      - 'v*' # Triggers when you push a tag like v1.0, v0.1.2, etc.
+      - 'v*'
 
 jobs:
   release:
     name: Release - ${{ matrix.target }}
-    runs-on: ubuntu-latest
+    # This is the key: Windows builds on Windows, Mac on Mac!
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - target: x86_64-unknown-linux-musl # Linux (Static, works everywhere)
-          - target: x86_64-apple-darwin       # macOS (Intel)
-          - target: aarch64-apple-darwin      # macOS (Apple Silicon/M1/M2)
-          - target: x86_64-pc-windows-msvc    # Windows
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: aarch64-apple-darwin
+            os: macos-latest
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Compile and Release
-        uses: rust-build/rust-build.action@v1.4.5
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Build Binary
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Archive Binary (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          cd target/${{ matrix.target }}/release
+          7z a ../../../codestat-${{ matrix.target }}.zip codestat.exe
+
+      - name: Archive Binary (Unix)
+        if: matrix.os != 'windows-latest'
+        run: |
+          cd target/${{ matrix.target }}/release
+          tar -czf ../../../codestat-${{ matrix.target }}.tar.gz codestat
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            codestat-${{ matrix.target }}.zip
+            codestat-${{ matrix.target }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          RUSTTARGET: ${{ matrix.target }}
-          ARCHIVE_TYPES: "tar.gz zip"
