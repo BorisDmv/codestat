@@ -8,7 +8,7 @@ on:
 jobs:
   release:
     name: Release - ${{ matrix.target }}
-    # This is the key: Windows builds on Windows, Mac on Mac!
+    # This line is the magic fix: it picks the right OS for the job
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
